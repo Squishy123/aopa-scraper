@@ -1,0 +1,19 @@
+{
+  "name": "aopa-scraper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Squishy123/aopa-scraper.git",
+  "author": "Squishy123 <christian.gnaw@gmail.com>",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "html-table-to-json": "^0.4.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "request-promise-native": "^1.0.7",
+    "tabletojson": "^1.0.4"
+  },
+  "scripts": {
+    "start": "node index.js"
+  }
+}
