@@ -47,13 +47,29 @@ const linkPre = `"/go-fly/aircraft-and-ownership/aircraft-fact-sheets/`;
                 let table = $('table.default');
                 let tables = [];
 
+                let models = table.find('th').length;
+
                 //get headings
                 table.find('th').each((i, th) => {
-                    tables.push($(th).text());
+                    tables.push({ name: $(th).text() });
                 })
 
-                table.children('tr').each((x, tr) => {
-                    tr.children().length
+                let c = 0;
+                table.find('tr').each((x, tr) => {
+                    if (x != 0) {
+                        let field = "";
+                        $(tr).children().each((j, td) => {
+                            if (c >= models)
+                                c = 0;
+
+                            if (j == 0) {
+                                field = $(td).text();
+                            }
+
+                            tables[c][field] = $(td).text();
+                            c++;
+                        });
+                    }
                 });
 
 
