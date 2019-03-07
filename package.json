@@ -7,11 +7,10 @@
   "license": "Apache-2.0",
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
-    "html-table-to-json": "^0.4.0",
+    "json2csv": "^4.3.5",
     "request": "^2.88.0",
     "request-promise": "^4.2.4",
-    "request-promise-native": "^1.0.7",
-    "tabletojson": "^1.0.4"
+    "request-promise-native": "^1.0.7"
   },
   "scripts": {
     "start": "node index.js"

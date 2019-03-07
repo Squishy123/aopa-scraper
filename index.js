@@ -2,12 +2,16 @@ const request = require('request-promise');
 
 const cheerio = require('cheerio');
 
+const json2csv = require('json2csv').parse;
+
+const fs = require('fs');
+
 const base = "https://www.aopa.org";
 const url = "https://www.aopa.org/go-fly/aircraft-and-ownership/aircraft-fact-sheets";
 const linkPre = `"/go-fly/aircraft-and-ownership/aircraft-fact-sheets/`;
 
 //main
-(async () => {
+async function main () {
     try {
         console.log("Scraping!");
 
@@ -33,7 +37,7 @@ const linkPre = `"/go-fly/aircraft-and-ownership/aircraft-fact-sheets/`;
         }
 
         //extract tables from each link
-        let tables = await Promise.all(links.map(async (href) => {
+        let extract = await Promise.all(links.map(async (href, i) => {
             try {
                 let req = await request({
                     uri: base + href,
@@ -46,7 +50,6 @@ const linkPre = `"/go-fly/aircraft-and-ownership/aircraft-fact-sheets/`;
                 let $ = cheerio.load(req);
                 let table = $('table.default');
                 let tables = [];
-
                 let models = table.find('th').length;
 
                 //get headings
@@ -71,16 +74,51 @@ const linkPre = `"/go-fly/aircraft-and-ownership/aircraft-fact-sheets/`;
                         });
                     }
                 });
-
-
-                //return (table) ? (tabletojson.convert(table)) : null;
-                return (table) ? tables : null;
+                return tables;
             } catch (err) {
                 return (err);
             }
         }));
-        console.log(tables);
+         //write to json
+         await fs.writeFile("database.json", JSON.stringify(extract), (err, data) => {
+            if(err) console.log(err);
+
+            console.log("JSON Write was successful!");
+        });
+
+        let csv = ""
+        for(let i = 0; i < extract.length; i++) {
+            for(let j = 0; j < extract[i].length; j++) {
+                csv+=json2csv((extract[i][j]), { fields: Object.keys(extract[i][j]) });
+            }
+        }
+        console.log(csv);
+        /*
+        let csv = extract.reduce((acc, ex) => {
+            console.log("reducing!");
+            //turn to csv
+            acc += json2csv(ex, { fields: Object.keys(ex[0]) });
+            return acc;
+        });
+
+        /*
+        await extract.forEach((ex) => {
+            console.log("reducing!");
+            csv += json2csv(ex, { fields: Object.keys(ex[0]) });
+            console.log(csv);
+        });
+        console.log(csv);*/
+
+        //write to file
+        await fs.writeFile("database.csv", csv, (err, data) => {
+            if(err) console.log(err);
+
+            console.log("Write was successful!");
+        });
+
     } catch (err) {
         return err;
     }
-})();
+}
+
+main();
